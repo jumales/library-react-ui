@@ -4,7 +4,13 @@ import BookAuthors from "./bookAuthors";
 class Book extends Component {
   render() {
     const { id, ibn, title, authors } = this.props.book;
-    const { onEdit, onDelete, onRemoveAuthor } = this.props;
+    const { onEdit, onDelete, onRemoveAuthor, onAddAuthor, book } = this.props;
+
+    /**<tr>
+          <td colspan="5">
+            <BookAuthors authors={authors} onDelete={onRemoveAuthor} />
+          </td>
+        </tr>*/
 
     return (
       <React.Fragment>
@@ -17,10 +23,22 @@ class Book extends Component {
             <p>{title}</p>
           </td>
           <td>
+            <BookAuthors authors={authors} onDelete={onRemoveAuthor} />
+          </td>
+          <td>
+            <button
+              id="addAuthor"
+              className="btn btn-primary"
+              onClick={() => onAddAuthor(book)}
+            >
+              Add author to book
+            </button>
+          </td>
+          <td>
             <button
               id="btnEdit"
               className="btn btn-primary"
-              onClick={() => onEdit(this.props.book)}
+              onClick={() => onEdit(book)}
             >
               Edit
             </button>
@@ -29,15 +47,10 @@ class Book extends Component {
             <button
               id="btnDelete"
               className="btn btn-danger"
-              onClick={() => onDelete(this.props.book)}
+              onClick={() => onDelete(book)}
             >
               Delete
             </button>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="5">
-            <BookAuthors authors={authors} onDelete={onRemoveAuthor} />
           </td>
         </tr>
       </React.Fragment>

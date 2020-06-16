@@ -6,7 +6,6 @@ class BookAuthor extends Component {
     const { id, firstName, lastName } = this.props.author;
     return (
       <tr>
-        <td scope="row">{id}</td>
         <td>
           <p>{firstName}</p>
         </td>
