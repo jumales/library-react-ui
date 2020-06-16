@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import Book from "./book";
 import BookAuthors from "./bookAuthors";
-import AlertDialog from "./alertDialog";
+import AlertDialog from "../dialog/alertDialog";
 
 class Books extends Component {
   state = {
