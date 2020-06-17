@@ -29,12 +29,10 @@ class Books extends Component {
 
   //grid actions
   onEdit = (book) => {
-    console.log("OnEditClicked", book);
     this.setState({ selectedBook: book, showBookEditorDialog: true });
   };
 
   onDelete = (book) => {
-    console.log("OnDelete", book);
     this.setState({ selectedBook: book, showDeleteDialog: true });
   };
 
