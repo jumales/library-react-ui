@@ -38,8 +38,13 @@ class Books extends Component {
     this.setState({ selectedBook: book, showDeleteDialog: true });
   };
 
-  onRemoveAuthor = (author) => {
-    console.log("onRemoveAuthor", author);
+  onRemoveAuthor = (author, book) => {
+    const books = this.state.books;
+    const index = books.find((b) => b.id === book.id);
+    const authors = book.authors.filter((a) => a.id !== author.id);
+    book.authors = authors;
+    books[index] = book;
+    this.setState({ books: books });
   };
 
   onAddAuthor = (book) => {};
