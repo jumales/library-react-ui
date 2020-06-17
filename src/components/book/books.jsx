@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import Book from "./book";
-import BookAuthors from "./bookAuthors";
 import AlertDialog from "../dialog/alertDialog";
+import BookEditor from "./bookEditor";
 
 class Books extends Component {
   state = {
     showDeleteDialog: false,
     selectedBook: {},
+    showBookEditorDialog: false,
     books: [
       {
         id: 1,
@@ -26,9 +27,10 @@ class Books extends Component {
     ],
   };
 
+  //grid actions
   onEdit = (book) => {
     console.log("OnEditClicked", book);
-    //let bookCopy = (...this.state.books);
+    this.setState({ selectedBook: book, showBookEditorDialog: true });
   };
 
   onDelete = (book) => {
@@ -42,13 +44,37 @@ class Books extends Component {
 
   onAddAuthor = (book) => {};
 
+  //delete dialog actions
   deleteBook = (book) => {
     const books = this.state.books.filter((b) => b.id !== book.id);
-    this.setState({ books, showDeleteDialog: false });
+    this.setState({ books, showDeleteDialog: false, selectedBook: {} });
   };
 
   cancelDeleteDialog = () => {
     this.setState({ showDeleteDialog: false });
+  };
+
+  //edit book editor
+  saveBook = (evt) => {
+    evt.preventDefault();
+
+    const books = this.state.books;
+    const sel = this.state.selectedBook;
+    books.map((book) => {
+      if (book.id === sel.id) {
+        book.ibn = evt.target.ibn.value;
+        book.title = evt.target.title.value;
+      }
+    });
+    this.setState({
+      books: books,
+      selectedBook: {},
+      showBookEditorDialog: false,
+    });
+  };
+
+  handleCancelEditBook = () => {
+    this.setState({ showBookEditorDialog: false });
   };
 
   render() {
@@ -60,6 +86,13 @@ class Books extends Component {
           handleClose={this.cancelDeleteDialog}
           item={this.state.selectedBook}
         />
+        <BookEditor
+          show={this.state.showBookEditorDialog}
+          handleSaveBook={this.saveBook}
+          handleCancel={this.handleCancelEditBook}
+          book={this.state.selectedBook}
+        />
+
         <table className="table table-dark">
           <thead>
             <tr>
@@ -74,16 +107,14 @@ class Books extends Component {
           </thead>
           <tbody>
             {this.state.books.map((book) => (
-              <React.Fragment>
-                <Book
-                  key={book.id}
-                  book={book}
-                  onEdit={this.onEdit}
-                  onDelete={this.onDelete}
-                  onRemoveAuthor={this.onRemoveAuthor}
-                  onAddAuthor={this.onAddAuthor}
-                />
-              </React.Fragment>
+              <Book
+                key={book.id}
+                book={book}
+                onEdit={this.onEdit}
+                onDelete={this.onDelete}
+                onRemoveAuthor={this.onRemoveAuthor}
+                onAddAuthor={this.onAddAuthor}
+              />
             ))}
           </tbody>
         </table>
