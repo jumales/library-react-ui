@@ -1,4 +1,5 @@
 import React from "react";
+import AuthorBooks from "./authorBooks";
 
 function Author(props) {
   const { id, firstName, lastName, dayOfBirth, oib, books } = props.author;
@@ -19,6 +20,13 @@ function Author(props) {
         </td>
         <td>
           <p>{dayOfBirth}</p>
+        </td>
+        <td>
+          <AuthorBooks
+            books={books}
+            author={author}
+            onRemoveBook={onRemoveBook}
+          />
         </td>
         <td>
           <button

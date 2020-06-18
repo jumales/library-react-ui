@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Author from "./author";
 import AlertDialog from "../dialog/alertDialog";
+import AuthorEditor from "./authorEditor";
 
 class Authors extends Component {
   state = {
@@ -30,8 +31,67 @@ class Authors extends Component {
     ],
   };
 
-  onEdit = (author) => {};
-  onDelete = (author) => {};
+  onEdit = (author) => {
+    this.setState({ selectedAuthor: author, showAuthorEditorDialog: true });
+  };
+
+  onDelete = (author) => {
+    this.setState({ selectedAuthor: author, showDeleteDialog: true });
+  };
+
+  deleteAuthor = (author) => {
+    const authors = this.state.authors.filter((a) => a.id !== author.id);
+    this.setState({
+      authors: authors,
+      showDeleteDialog: false,
+      selectedAuthor: {},
+    });
+  };
+
+  cancelDeleteDialog = () => {
+    this.setState({
+      showDeleteDialog: false,
+      selectedAuthor: {},
+    });
+  };
+
+  //edit author
+  saveAuthor = (evt) => {
+    evt.preventDefault();
+
+    const authors = this.state.authors;
+    const sel = this.state.selectedAuthor;
+    authors.map((author) => {
+      if (author.id === sel.id) {
+        author.firstName = evt.target.firstName.value;
+        author.lastName = evt.target.lastName.value;
+        author.oib = evt.target.oib.value;
+        author.dayOfBirth = evt.target.dayOfBirth.value;
+      }
+    });
+    this.setState({
+      authors: authors,
+      selectedAuthor: {},
+      showAuthorEditorDialog: false,
+    });
+  };
+
+  handleCancelEditAuthor = () => {
+    this.setState({
+      showAuthorEditorDialog: false,
+      selectedAuthor: {},
+    });
+  };
+
+  //remove book from author
+  onRemoveBook = (author, book) => {
+    const authors = this.state.authors;
+    const index = authors.find((a) => a.id === author.id);
+    const books = author.books.filter((b) => b.id !== book.id);
+    author.books = books;
+    authors[index] = author;
+    this.setState({ authors: authors });
+  };
 
   render() {
     return (
@@ -41,6 +101,12 @@ class Authors extends Component {
           handleDelete={this.deleteAuthor}
           handleClose={this.cancelDeleteDialog}
           item={this.state.selectedAuthor}
+        />
+        <AuthorEditor
+          show={this.state.showAuthorEditorDialog}
+          handleSaveAuthor={this.saveAuthor}
+          handleCancel={this.handleCancelEditAuthor}
+          author={this.state.selectedAuthor}
         />
 
         <table className="table table-dark">
@@ -62,6 +128,7 @@ class Authors extends Component {
                 author={author}
                 onEdit={this.onEdit}
                 onDelete={this.onDelete}
+                onRemoveBook={this.onRemoveBook}
               />
             ))}
           </tbody>

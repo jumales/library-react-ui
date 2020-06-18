@@ -50,11 +50,11 @@ class Books extends Component {
   //delete dialog actions
   deleteBook = (book) => {
     const books = this.state.books.filter((b) => b.id !== book.id);
-    this.setState({ books, showDeleteDialog: false, selectedBook: {} });
+    this.setState({ books: books, showDeleteDialog: false, selectedBook: {} });
   };
 
   cancelDeleteDialog = () => {
-    this.setState({ showDeleteDialog: false });
+    this.setState({ showDeleteDialog: false, selectedBook: {} });
   };
 
   //edit book editor
@@ -77,7 +77,7 @@ class Books extends Component {
   };
 
   handleCancelEditBook = () => {
-    this.setState({ showBookEditorDialog: false });
+    this.setState({ showBookEditorDialog: false, selectedBook: {} });
   };
 
   render() {
