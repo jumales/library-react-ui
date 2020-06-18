@@ -5,10 +5,11 @@ import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
 import Books from "./components/book/books";
+import Authors from "./components/author/authors";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Books />
+    <Authors />
   </React.StrictMode>,
   document.getElementById("root")
 );
