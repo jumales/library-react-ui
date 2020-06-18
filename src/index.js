@@ -3,11 +3,11 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
-import MainComponent from "./components/tabs";
+import MainNav from "./components/nav";
 
 ReactDOM.render(
   <React.StrictMode>
-    <MainComponent />
+    <MainNav />
   </React.StrictMode>,
   document.getElementById("root")
 );
