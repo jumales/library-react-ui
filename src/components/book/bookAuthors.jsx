@@ -8,7 +8,7 @@ function BookAuthors(props) {
       <tbody>
         {authors.map((author) => (
           <BookAuthor
-            key={author.id}
+            key={author.id + "-" + book.id}
             author={author}
             book={book}
             onDelete={onDelete}

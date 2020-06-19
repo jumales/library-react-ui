@@ -19,7 +19,7 @@ function Author(props) {
           <p>{oib}</p>
         </td>
         <td>
-          <p>{dayOfBirth}</p>
+          <p>{dayOfBirth.substring(0, 10)}</p>
         </td>
         <td>
           <AuthorBooks

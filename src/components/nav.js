@@ -18,6 +18,7 @@ class MainNav extends Component {
   };
 
   render() {
+    localStorage.setItem("REST_URI", "http://localhost:8080/api/v1/");
     return (
       <React.Fragment>
         <Navbar bg="dark" variant="dark">
@@ -27,8 +28,7 @@ class MainNav extends Component {
             <Nav.Link eventKey="authors">Authors</Nav.Link>
           </Nav>
           <Form inline>
-            <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-            <Button variant="outline-info">Search</Button>
+            <Button variant="outline-info">Login</Button>
           </Form>
         </Navbar>
         <div hidden={this.state.showBooks === false}>

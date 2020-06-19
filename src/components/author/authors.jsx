@@ -2,47 +2,66 @@ import React, { Component } from "react";
 import Author from "./author";
 import AlertDialog from "../dialog/alertDialog";
 import AuthorEditor from "./authorEditor";
+import { Button } from "react-bootstrap";
 
 class Authors extends Component {
   state = {
     showDeleteDialog: false,
+    showDeleteBookDialog: false,
     selectedAuthor: {},
-    showAuthorEditorDialog: false,
-    authors: [
-      {
-        id: 1,
-        firstName: "Jure",
-        lastName: "Maleš",
-        oib: "12345678900",
-        dayOfBirth: "1987-11-23",
-        books: [{ id: 1, ibn: "1234", title: "First title" }],
-      },
-      {
-        id: 2,
-        firstName: "Nikolina",
-        lastName: "Antolić",
-        oib: "01278968578",
-        dayOfBirth: "1991-11-15",
-        books: [
-          { id: 1, ibn: "1234", title: "First title" },
-          { id: 2, ibn: "5678", title: "Second title" },
-        ],
-      },
-    ],
+    selectedBook: {}, //onRemoveBook needed
+    showAuthorEditDialog: false,
+    showAuthorCreateDialog: false,
+    authors: [],
   };
 
+  componentDidMount = () => {
+    this.getAuthors();
+  };
+
+  //event methods
   onEdit = (author) => {
-    this.setState({ selectedAuthor: author, showAuthorEditorDialog: true });
+    this.setState({ selectedAuthor: author, showAuthorEditDialog: true });
   };
 
   onDelete = (author) => {
     this.setState({ selectedAuthor: author, showDeleteDialog: true });
   };
 
-  deleteAuthor = (author) => {
-    const authors = this.state.authors.filter((a) => a.id !== author.id);
+  onAddNewAuthor = () => {
+    this.setState({ showAuthorCreateDialog: true });
+  };
+
+  onRemoveBook = (author, book) => {
     this.setState({
-      authors: authors,
+      showDeleteBookDialog: true,
+      selectedBook: book,
+      selectedAuthor: author,
+    });
+  };
+
+  //delete author methods
+  deleteAuthor = (author) => {
+    const uri = localStorage.getItem("REST_URI");
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(author),
+    };
+    fetch(uri + "authors", requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status.code === 200) {
+          this.getAuthors();
+        } else {
+          console.error("error", data);
+        }
+      })
+      .catch(console.log);
+    this.setState({
       showDeleteDialog: false,
       selectedAuthor: {},
     });
@@ -55,42 +74,136 @@ class Authors extends Component {
     });
   };
 
-  //edit author
-  saveAuthor = (evt) => {
+  //edit or create author
+  editAuthor = (evt) => {
     evt.preventDefault();
 
-    const authors = this.state.authors;
-    const sel = this.state.selectedAuthor;
-    authors.map((author) => {
-      if (author.id === sel.id) {
-        author.firstName = evt.target.firstName.value;
-        author.lastName = evt.target.lastName.value;
-        author.oib = evt.target.oib.value;
-        author.dayOfBirth = evt.target.dayOfBirth.value;
-      }
-    });
-    this.setState({
-      authors: authors,
-      selectedAuthor: {},
-      showAuthorEditorDialog: false,
-    });
+    const newValues = {
+      id: this.state.selectedAuthor.id,
+      firstName: evt.target.firstName.value,
+      lastName: evt.target.lastName.value,
+      dayOfBirth: evt.target.dayOfBirth.value,
+      oib: evt.target.oib.value,
+    };
+
+    const uri = localStorage.getItem("REST_URI");
+
+    const requestOptions = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(newValues),
+    };
+
+    fetch(uri + "authors", requestOptions)
+      .then((response) => response.json())
+      .then((data) => this.handleAuthorEditorResult(data))
+      .catch(console.log);
+  };
+
+  handleAuthorEditorResult = (data) => {
+    if (data.status.code > 201) {
+      console.log(data);
+      this.setState({
+        showAuthorEditDialog: false,
+        showAuthorCreateDialog: false,
+      });
+    } else {
+      this.getAuthors();
+      this.setState({
+        selectedAuthor: {},
+        showAuthorEditDialog: false,
+        showAuthorCreateDialog: false,
+      });
+    }
+  };
+
+  createAuthor = (evt) => {
+    evt.preventDefault();
+
+    const newValues = {
+      id: null,
+      firstName: evt.target.firstName.value,
+      lastName: evt.target.lastName.value,
+      dayOfBirth: evt.target.dayOfBirth.value,
+      oib: evt.target.oib.value,
+    };
+
+    const uri = localStorage.getItem("REST_URI");
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(newValues),
+    };
+
+    fetch(uri + "authors", requestOptions)
+      .then((response) => response.json())
+      .then((data) => this.handleAuthorEditorResult(data))
+      .catch(console.log);
   };
 
   handleCancelEditAuthor = () => {
     this.setState({
-      showAuthorEditorDialog: false,
+      showAuthorEditDialog: false,
       selectedAuthor: {},
     });
   };
 
   //remove book from author
-  onRemoveBook = (author, book) => {
-    const authors = this.state.authors;
-    const index = authors.find((a) => a.id === author.id);
-    const books = author.books.filter((b) => b.id !== book.id);
-    author.books = books;
-    authors[index] = author;
-    this.setState({ authors: authors });
+  removeBookFromAuthor = (author) => {
+    const uri = localStorage.getItem("REST_URI");
+    const dto = { authorId: author.id, bookId: this.state.selectedBook.id };
+    const requestOptions = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(dto),
+    };
+
+    fetch(uri + "books/deleteAuthorFromBook", requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status.code === 200) {
+          this.getAuthors();
+        } else {
+          console.error(data);
+        }
+        this.setState({
+          selectedAuthor: {},
+          selectedAuthor: {},
+          showDeleteBookDialog: false,
+        });
+      })
+      .catch(console.log);
+  };
+
+  //helper methods
+  getAuthors = () => {
+    const uri = localStorage.getItem("REST_URI");
+    fetch(uri + "authors")
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ authors: data });
+      })
+      .catch(console.log);
+  };
+
+  getSelectedAuthor = () => {
+    const uri = localStorage.getItem("REST_URI");
+    fetch(uri + "authors/" + this.state.selectedAuthor.id)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ selectedAuthor: data });
+      })
+      .catch(console.log);
   };
 
   render() {
@@ -102,11 +215,26 @@ class Authors extends Component {
           handleClose={this.cancelDeleteDialog}
           item={this.state.selectedAuthor}
         />
+        <AlertDialog
+          show={this.state.showDeleteBookDialog}
+          handleDelete={this.removeBookFromAuthor}
+          handleClose={this.cancelDeleteDialog}
+          item={this.state.selectedAuthor}
+        />
         <AuthorEditor
-          show={this.state.showAuthorEditorDialog}
-          handleSaveAuthor={this.saveAuthor}
+          id="editAuthor"
+          show={this.state.showAuthorEditDialog}
+          handleSaveAuthor={this.editAuthor}
           handleCancel={this.handleCancelEditAuthor}
           author={this.state.selectedAuthor}
+        />
+
+        <AuthorEditor
+          id="createAuthor"
+          show={this.state.showAuthorCreateDialog}
+          handleSaveAuthor={this.createAuthor}
+          handleCancel={this.handleCancelEditAuthor}
+          author={null}
         />
 
         <table className="table table-dark">
@@ -133,6 +261,7 @@ class Authors extends Component {
             ))}
           </tbody>
         </table>
+        <Button onClick={this.onAddNewAuthor}>Add new author</Button>
       </React.Fragment>
     );
   }

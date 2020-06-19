@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Book from "./book";
 import AlertDialog from "../dialog/alertDialog";
 import BookEditor from "./bookEditor";
+import { Button } from "react-bootstrap";
 
 class Books extends Component {
   state = {
@@ -76,6 +77,16 @@ class Books extends Component {
     });
   };
 
+  componentDidMount = () => {
+    const uri = localStorage.getItem("REST_URI");
+    fetch(uri + "books")
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ books: data });
+      })
+      .catch(console.log);
+  };
+
   handleCancelEditBook = () => {
     this.setState({ showBookEditorDialog: false, selectedBook: {} });
   };
@@ -121,6 +132,7 @@ class Books extends Component {
             ))}
           </tbody>
         </table>
+        <Button>Add new book</Button>
       </React.Fragment>
     );
   }
