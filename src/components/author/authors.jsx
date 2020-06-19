@@ -78,13 +78,7 @@ class Authors extends Component {
   editAuthor = (evt) => {
     evt.preventDefault();
 
-    const newValues = {
-      id: this.state.selectedAuthor.id,
-      firstName: evt.target.firstName.value,
-      lastName: evt.target.lastName.value,
-      dayOfBirth: evt.target.dayOfBirth.value,
-      oib: evt.target.oib.value,
-    };
+    const newValues = this.getAuthorDto(this.state.selectedAuthor.id, evt);
 
     const uri = localStorage.getItem("REST_URI");
 
@@ -107,6 +101,7 @@ class Authors extends Component {
     if (data.status.code > 201) {
       console.log(data);
       this.setState({
+        selectedAuthor: {},
         showAuthorEditDialog: false,
         showAuthorCreateDialog: false,
       });
@@ -120,16 +115,20 @@ class Authors extends Component {
     }
   };
 
-  createAuthor = (evt) => {
-    evt.preventDefault();
-
-    const newValues = {
-      id: null,
+  getAuthorDto = (id, evt) => {
+    return {
+      id: id,
       firstName: evt.target.firstName.value,
       lastName: evt.target.lastName.value,
       dayOfBirth: evt.target.dayOfBirth.value,
       oib: evt.target.oib.value,
     };
+  };
+
+  createAuthor = (evt) => {
+    evt.preventDefault();
+
+    const newValues = this.getAuthorDto(null, evt);
 
     const uri = localStorage.getItem("REST_URI");
 
@@ -177,7 +176,7 @@ class Authors extends Component {
           console.error(data);
         }
         this.setState({
-          selectedAuthor: {},
+          selectedBook: {},
           selectedAuthor: {},
           showDeleteBookDialog: false,
         });
