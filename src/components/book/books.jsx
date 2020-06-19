@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import Book from "./book";
 import AlertDialog from "../dialog/alertDialog";
 import BookEditor from "./bookEditor";
+import AddAuthorToBook from "./bookAddAuthor";
 import { Button } from "react-bootstrap";
 
 class Books extends Component {
@@ -12,7 +13,9 @@ class Books extends Component {
     selectedAuthor: {},
     showBookEditDialog: false,
     showBookCreateDialog: false,
+    showAddAuthorToBook: false,
     books: [],
+    authorsNotOnBook: [],
   };
 
   componentDidMount = () => {
@@ -50,7 +53,11 @@ class Books extends Component {
     });
   };
 
-  onAddAuthor = (book) => {};
+  onAddAuthor = (book) => {
+    console.log(book);
+    this.setState({ showAddAuthorToBook: true, selectedBook: book });
+    this.getAuthorsNotOnBook(book.id);
+  };
 
   onAddNewBook = () => {
     this.setState({ showBookCreateDialog: true });
@@ -70,12 +77,16 @@ class Books extends Component {
     this.setState({ books: books, showDeleteDialog: false, selectedBook: {} });
   };
 
-  cancelDeleteDialog = () => {
+  handleCancel = () => {
     this.setState({
       showDeleteDialog: false,
       showDeleteAuthorDialog: false,
+      showAddAuthorToBook: false,
+      showBookCreateDialog: false,
+      showBookEditDialog: false,
       selectedBook: {},
-      selectedBook: {},
+      selectedAuthor: {},
+      authorsNotOnBook: [],
     });
   };
 
@@ -105,19 +116,10 @@ class Books extends Component {
   handleBookEditorResult = (data) => {
     if (data.status.code > 201) {
       console.log(data);
-      this.setState({
-        selectedBook: {},
-        showBookEditDialog: false,
-        showBookCreateDialog: false,
-      });
     } else {
       this.getBooks();
-      this.setState({
-        selectedBook: {},
-        showBookEditDialog: false,
-        showBookCreateDialog: false,
-      });
     }
+    this.handleCancel();
   };
 
   getBookDto = (id, evt) => {
@@ -150,14 +152,6 @@ class Books extends Component {
       .catch(console.log);
   };
 
-  handleCancelEditBook = () => {
-    this.setState({
-      showBookEditDialog: false,
-      showBookCreateDialog: false,
-      selectedBook: {},
-    });
-  };
-
   removeAuthorFromBook = (book) => {
     const uri = localStorage.getItem("REST_URI");
     const dto = { bookId: book.id, authorId: this.state.selectedAuthor.id };
@@ -178,11 +172,7 @@ class Books extends Component {
         } else {
           console.error(data);
         }
-        this.setState({
-          selectedBook: {},
-          selectedAuthor: {},
-          showDeleteAuthorDialog: false,
-        });
+        this.handleCancel();
       })
       .catch(console.log);
   };
@@ -197,32 +187,79 @@ class Books extends Component {
       .catch(console.log);
   };
 
+  handleAddAuthorToBook = (evt) => {
+    evt.preventDefault();
+    const uri = localStorage.getItem("REST_URI");
+    const dto = {
+      bookId: this.state.selectedBook.id,
+      authorId: evt.target.authors.value,
+    };
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(dto),
+    };
+
+    fetch(uri + "books/addAuthorToBook", requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.status.code === 200) {
+          this.getBooks();
+        } else {
+          console.error(data);
+        }
+        this.handleCancel();
+      })
+      .catch(console.log);
+  };
+
+  getAuthorsNotOnBook = (bookId) => {
+    const uri =
+      localStorage.getItem("REST_URI") + "authors/notOnBook/" + bookId;
+    fetch(uri)
+      .then((res) => res.json())
+      .then((data) => {
+        this.setState({ authorsNotOnBook: data });
+      })
+      .catch(console.log);
+  };
+
   render() {
     return (
       <React.Fragment>
         <AlertDialog
           show={this.state.showDeleteDialog}
           handleDelete={this.deleteBook}
-          handleClose={this.cancelDeleteDialog}
+          handleClose={this.handleCancel}
           item={this.state.selectedBook}
         />
         <AlertDialog
           show={this.state.showDeleteAuthorDialog}
           handleDelete={this.removeAuthorFromBook}
-          handleClose={this.cancelDeleteDialog}
+          handleClose={this.handleCancel}
           item={this.state.selectedBook}
         />
         <BookEditor
           show={this.state.showBookEditDialog}
           handleSaveBook={this.editBook}
-          handleCancel={this.handleCancelEditBook}
+          handleCancel={this.handleCancel}
           book={this.state.selectedBook}
         />
         <BookEditor
           show={this.state.showBookCreateDialog}
           handleSaveBook={this.createBook}
-          handleCancel={this.handleCancelEditBook}
+          handleCancel={this.handleCancel}
           book={null}
+        />
+        <AddAuthorToBook
+          show={this.state.showAddAuthorToBook}
+          handleCancel={this.handleCancel}
+          handleAddAuthorToBook={this.handleAddAuthorToBook}
+          book={this.state.selectedBook}
+          authors={this.state.authorsNotOnBook}
         />
 
         <table className="table table-dark">
