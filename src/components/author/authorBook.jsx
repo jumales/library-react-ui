@@ -1,7 +1,7 @@
 import React from "react";
 
 function AuthorBook(props) {
-  const { author, onRemoveBook, book } = props;
+  const { author, onRemoveBook, book, isAdmin } = props;
   const { ibn, title } = props.book;
   return (
     <tr>
@@ -16,6 +16,7 @@ function AuthorBook(props) {
           id="btnRemove"
           className="btn btn-danger btn-sm"
           onClick={() => onRemoveBook(author, book)}
+          hidden={!isAdmin}
         >
           Remove book from author
         </button>

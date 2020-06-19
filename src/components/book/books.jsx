@@ -34,6 +34,7 @@ class Books extends Component {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
       },
       body: JSON.stringify(book),
     };
@@ -103,6 +104,7 @@ class Books extends Component {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
       },
       body: JSON.stringify(newValues),
     };
@@ -142,6 +144,7 @@ class Books extends Component {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
       },
       body: JSON.stringify(newValues),
     };
@@ -160,6 +163,7 @@ class Books extends Component {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
       },
       body: JSON.stringify(dto),
     };
@@ -199,6 +203,7 @@ class Books extends Component {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
       },
       body: JSON.stringify(dto),
     };
@@ -283,11 +288,18 @@ class Books extends Component {
                 onDelete={this.onDelete}
                 onRemoveAuthor={this.onRemoveAuthor}
                 onAddAuthor={this.onAddAuthor}
-              />
+                isAdmin={localStorage.getItem("IS_ADMIN")}
+                isUserLogged={localStorage.getItem("TOKEN") !== null}
+              ></Book>
             ))}
           </tbody>
         </table>
-        <Button onClick={this.onAddNewBook}>Add new book</Button>
+        <Button
+          hidden={localStorage.getItem("TOKEN") === null}
+          onClick={this.onAddNewBook}
+        >
+          Add new book
+        </Button>
       </React.Fragment>
     );
   }

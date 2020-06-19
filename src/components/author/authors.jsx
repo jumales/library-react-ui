@@ -48,6 +48,7 @@ class Authors extends Component {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
       },
       body: JSON.stringify(author),
     };
@@ -87,6 +88,7 @@ class Authors extends Component {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
       },
       body: JSON.stringify(newValues),
     };
@@ -137,6 +139,7 @@ class Authors extends Component {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
       },
       body: JSON.stringify(newValues),
     };
@@ -163,6 +166,7 @@ class Authors extends Component {
       headers: {
         "Content-Type": "application/json",
         "Access-Control-Allow-Origin": "*",
+        Authorization: "Bearer " + localStorage.getItem("TOKEN"),
       },
       body: JSON.stringify(dto),
     };
@@ -256,11 +260,18 @@ class Authors extends Component {
                 onEdit={this.onEdit}
                 onDelete={this.onDelete}
                 onRemoveBook={this.onRemoveBook}
+                isAdmin={localStorage.getItem("IS_ADMIN")}
+                isUserLogged={localStorage.getItem("TOKEN") !== null}
               />
             ))}
           </tbody>
         </table>
-        <Button onClick={this.onAddNewAuthor}>Add new author</Button>
+        <Button
+          onClick={this.onAddNewAuthor}
+          hidden={localStorage.getItem("TOKEN") === null}
+        >
+          Add new author
+        </Button>
       </React.Fragment>
     );
   }

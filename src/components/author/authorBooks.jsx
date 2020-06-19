@@ -2,7 +2,7 @@ import React from "react";
 import AuthorBook from "./authorBook";
 
 function AuthorBooks(props) {
-  const { books, author, onRemoveBook } = props;
+  const { books, author, onRemoveBook, isAdmin } = props;
   return (
     <table className="table table-dark">
       <tbody>
@@ -12,6 +12,7 @@ function AuthorBooks(props) {
             author={author}
             book={book}
             onRemoveBook={onRemoveBook}
+            isAdmin={isAdmin}
           />
         ))}
       </tbody>

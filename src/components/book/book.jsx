@@ -3,7 +3,15 @@ import BookAuthors from "./bookAuthors";
 
 function Book(props) {
   const { id, ibn, title, authors } = props.book;
-  const { onEdit, onDelete, onRemoveAuthor, onAddAuthor, book } = props;
+  const {
+    onEdit,
+    onDelete,
+    onRemoveAuthor,
+    onAddAuthor,
+    book,
+    isUserLogged,
+    isAdmin,
+  } = props;
 
   return (
     <React.Fragment>
@@ -20,6 +28,7 @@ function Book(props) {
             authors={authors}
             book={book}
             onDelete={onRemoveAuthor}
+            isAdmin={isAdmin}
           />
         </td>
         <td>
@@ -27,6 +36,7 @@ function Book(props) {
             id="addAuthor"
             className="btn btn-primary btn-sm"
             onClick={() => onAddAuthor(book)}
+            hidden={!isUserLogged}
           >
             Add author to book
           </button>
@@ -36,6 +46,7 @@ function Book(props) {
             id="btnEdit"
             className="btn btn-primary btn-sm"
             onClick={() => onEdit(book)}
+            hidden={!isUserLogged}
           >
             Edit
           </button>
@@ -45,6 +56,7 @@ function Book(props) {
             id="btnDelete"
             className="btn btn-danger btn-sm"
             onClick={() => onDelete(book)}
+            hidden={!isAdmin}
           >
             Delete
           </button>
