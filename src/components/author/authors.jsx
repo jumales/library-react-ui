@@ -21,6 +21,7 @@ class Authors extends Component {
 
   //event methods
   onEdit = (author) => {
+    author.dayOfBirth = author.dayOfBirth.substring(0, 10);
     this.setState({ selectedAuthor: author, showAuthorEditDialog: true });
   };
 

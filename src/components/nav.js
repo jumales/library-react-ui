@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Navbar, Nav, Form, FormControl, Button } from "react-bootstrap";
+import { Navbar, Nav, Form, Button } from "react-bootstrap";
 import Books from "./book/books";
 import Authors from "./author/authors";
 import Login from "./login";
@@ -24,7 +24,7 @@ class MainNav extends Component {
   selectedKey = (key) => {
     if (key === "books" && this.state.showBooks === false) {
       this.setState({ showBooks: true, showAuthors: false });
-    } else if (key == "authors" && this.state.showAuthors === false) {
+    } else if (key === "authors" && this.state.showAuthors === false) {
       this.setState({ showBooks: false, showAuthors: true });
     }
   };

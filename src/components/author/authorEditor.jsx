@@ -22,6 +22,7 @@ class AuthorEditor extends Component {
 
   render() {
     const { show, handleCancel, handleSaveAuthor, author } = this.props;
+
     return (
       <>
         <Modal show={show} onHide={handleCancel}>

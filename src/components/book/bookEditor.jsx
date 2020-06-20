@@ -1,4 +1,4 @@
-import React, { Component, useImperativeHandle } from "react";
+import React, { Component } from "react";
 import { Button, Modal, Form } from "react-bootstrap";
 
 class BookEditor extends Component {
